@@ -1,17 +1,16 @@
-import { INCREMENT, DECREMENT } from "../actions";
+import { READ_EVENTS } from "../actions";
+import _ from "lodash";
 
 // 初期状態のオブジェクトを用意する
 const initialState = { value: 0 };
 
 // reducerは関数として定義
 // 受け取ったactionのtypeに応じて、状態を変更して、結果returnする
-export default (state = initialState, action) => {
+export default (events = initialState, action) => {
   switch (action.type) {
-    case INCREMENT:
-      return { value: state.value + 1 };
-    case DECREMENT:
-      return { value: state.value - 1 };
+    case READ_EVENTS:
+      return _.mapKeys(action.response.data, "id");
     default:
-      return state;
+      return events;
   }
 };
