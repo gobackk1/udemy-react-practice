@@ -14,6 +14,7 @@ import * as serviceWorker from "./serviceWorker";
 const store = createStore(reducer);
 
 ReactDOM.render(
+  // Providerでラップしたコンポーネント全てが、storeにアクセスできるようになる
   <Provider store={store}>
     <App />
   </Provider>,
