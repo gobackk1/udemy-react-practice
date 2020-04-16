@@ -7,8 +7,10 @@ import { Provider } from "react-redux";
 import "./index.css";
 import reducer from "./reducers";
 import EventsIndex from "./components/events_index";
+import EventsNew from "./components/events_new";
 import * as serviceWorker from "./serviceWorker";
 import thunk from "redux-thunk";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
 
 // ここで作成するstoreはアプリで唯一のものになる
 // アプリ内部の全てのstateは、このstoreに集約されている
@@ -17,7 +19,12 @@ const store = createStore(reducer, applyMiddleware(thunk));
 ReactDOM.render(
   // Providerでラップしたコンポーネント全てが、storeにアクセスできるようになる
   <Provider store={store}>
-    <EventsIndex />
+    <BrowserRouter>
+      <Switch>
+        <Route exact path="events/new" component={EventsNew}></Route>
+        <Route exact path="/" component={EventsIndex}></Route>
+      </Switch>
+    </BrowserRouter>
   </Provider>,
   document.getElementById("root")
 );
