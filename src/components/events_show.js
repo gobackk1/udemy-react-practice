@@ -10,6 +10,10 @@ class EventsNew extends Component {
     this.onSubmit = this.onSubmit.bind(this);
     this.onDeleteClick = this.onDeleteClick.bind(this);
   }
+  componentDidMount() {
+    const { id } = this.props.match.params;
+    if (id) this.props.getEvent(id);
+  }
   renderField(field) {
     const {
       input,
@@ -17,7 +21,6 @@ class EventsNew extends Component {
       type,
       meta: { touched, error }
     } = field;
-    console.log(field);
     return (
       <div>
         <input {...input} placeholder={label} type={type} />
@@ -26,7 +29,7 @@ class EventsNew extends Component {
     );
   }
   async onSubmit(values) {
-    // await this.props.postEvent(values);
+    await this.props.putEvent(values);
     this.props.history.push("/");
   }
   async onDeleteClick() {
@@ -35,9 +38,7 @@ class EventsNew extends Component {
     this.props.history.push("/");
   }
   render() {
-    const { handleSubmit, pristine, submitting } = this.props;
-    console.log(submitting);
-
+    const { handleSubmit, pristine, submitting, invalid } = this.props;
     return (
       <form onSubmit={handleSubmit(this.onSubmit)}>
         <div>
@@ -58,7 +59,7 @@ class EventsNew extends Component {
           <input
             type="submit"
             value="Submit"
-            disabled={pristine || submitting}
+            disabled={pristine || submitting || invalid}
           />
           <Link to="/">Cancel</Link>
           <Link to="/" onClick={this.onDeleteClick}>
@@ -77,11 +78,19 @@ const validate = values => {
 
   return errors;
 };
-// const mapStateToProps = state => ({ events: state.events });
 
-const mapDispatchToProps = { deleteEvent };
+const mapStateToProps = (state, ownProps) => {
+  const event = state.events[ownProps.match.params.id];
+  return { initialValues: event, event };
+};
+
+const mapDispatchToProps = { deleteEvent, getEvent, putEvent };
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
-)(reduxForm({ validate, form: "eventNewForm" })(EventsNew));
+)(
+  reduxForm({ validate, form: "eventNewForm", enableReinitialize: true })(
+    EventsNew
+  )
+);
