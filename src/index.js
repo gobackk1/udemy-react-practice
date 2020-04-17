@@ -8,21 +8,29 @@ import "./index.css";
 import reducer from "./reducers";
 import EventsIndex from "./components/events_index";
 import EventsNew from "./components/events_new";
+import EventsShow from "./components/events_show";
 import * as serviceWorker from "./serviceWorker";
 import thunk from "redux-thunk";
 import { BrowserRouter, Route, Switch } from "react-router-dom";
+import { composeWithDevTools } from "redux-devtools-extension";
 
+const enhancer =
+  process.env.NODE_ENV === "development"
+    ? composeWithDevTools(applyMiddleware(thunk))
+    : applyMiddleware(thunk);
 // ここで作成するstoreはアプリで唯一のものになる
 // アプリ内部の全てのstateは、このstoreに集約されている
-const store = createStore(reducer, applyMiddleware(thunk));
+const store = createStore(reducer, enhancer);
 
 ReactDOM.render(
   // Providerでラップしたコンポーネント全てが、storeにアクセスできるようになる
   <Provider store={store}>
     <BrowserRouter>
       <Switch>
-        <Route exact path="/events/new" component={EventsNew}></Route>
-        <Route exact path="/" component={EventsIndex}></Route>
+        <Route path="/events/new" component={EventsNew}></Route>
+        <Route path="/events/:id" component={EventsShow}></Route>
+        <Route path="/" component={EventsIndex}></Route>
+        <Route path="/events" component={EventsIndex}></Route>
       </Switch>
     </BrowserRouter>
   </Provider>,
